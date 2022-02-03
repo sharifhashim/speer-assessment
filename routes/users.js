@@ -1,10 +1,28 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
-const { addUser, getUserByUserName } = require("../helpers/dbHelpers.js");
+const {
+  addUser,
+  getUserByUserName,
+  login,
+} = require("../helpers/dbHelpers.js");
 
-module.exports = ({ addUser, getUserByUserName }) => {
-  router.post("/", (req, res) => {
+module.exports = ({ addUser, getUserByUserName, login }) => {
+  router.post("/login", (req, res) => {
+    const { userName, password } = req.body;
+    login(userName, password)
+      .then((user) => {
+        if (!user) {
+          res.status(401);
+          return res.send({ message: "Wrong username or password" });
+        }
+        req.session.user = user;
+        res.json(user);
+      })
+      .catch((error) => res.send(error));
+  });
+
+  router.post("/resgister", (req, res) => {
     const { userName, password } = req.body;
     const hashedPassword = bcrypt.hashSync(password, 10);
     getUserByUserName(userName)
