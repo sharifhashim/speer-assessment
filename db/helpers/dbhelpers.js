@@ -1,5 +1,16 @@
 module.exports = (db) => {
-  const addUser = () => {
+  const getUserByUserName = (userName) => {
+    const query = {
+      text: `SELECT user_name from users WHERE user_name = $1`,
+      values: [userName],
+    };
+    return db
+      .query(query, values)
+      .then((result) => result.rows[0])
+      .catch((error) => error);
+  };
+
+  const addUser = (userName, password) => {
     const query = {
       text: `INSERT INTO users (user_name, password)
       VALUES ($1, $2) RETURNING *;`,
@@ -8,11 +19,12 @@ module.exports = (db) => {
 
     return db
       .query(query, values)
-      .then((result) => result.rows)
+      .then((result) => result.rows[0])
       .catch((error) => error);
   };
 
   return {
     addUser,
+    getUserByUserName,
   };
 };
