@@ -35,6 +35,17 @@ describe("POST /api/users/register", () => {
     expect(newUser.body.user_name).toBe("sharif");
     expect(newUser.statusCode).toBe(200);
   });
+
+  test("It should respond with error username already exists", async () => {
+    const newUser = await request(app).post("/api/users/register").send({
+      userName: "hashim",
+      password: "password",
+    });
+    expect(newUser.body.msg).toBe(
+      "Sorry, a user with this username already exists"
+    );
+    expect(newUser.statusCode).toBe(200);
+  });
 });
 
 describe("POST /api/users/login", () => {
@@ -47,17 +58,13 @@ describe("POST /api/users/login", () => {
     expect(user.body.user_name).toBe("hashim");
     expect(user.statusCode).toBe(200);
   });
-});
 
-describe("POST /api/users/register", () => {
-  test("It should respond with error username already exists", async () => {
-    const newUser = await request(app).post("/api/users/register").send({
+  test("It should respond with session cookies", async () => {
+    const user = await request(app).post("/api/users/login").send({
       userName: "hashim",
       password: "password",
     });
-    expect(newUser.body.msg).toBe(
-      "Sorry, a user with this username already exists"
-    );
-    expect(newUser.statusCode).toBe(200);
+    expect(user.header).toHaveProperty("set-cookie");
+    expect(user.statusCode).toBe(200);
   });
 });
