@@ -60,7 +60,7 @@ module.exports = (db) => {
       .catch((error) => error);
   };
 
-  const getTweet = (userName) => {
+  const getTweets = (userName) => {
     const query = {
       text: `SELECT * FROM tweets WHERE user_name = $1;`,
     };
@@ -104,7 +104,7 @@ module.exports = (db) => {
     getUserByUserName,
     login,
     addTweet,
-    getTweet,
+    getTweets,
     updateTweet,
     deleteTweet,
   };
