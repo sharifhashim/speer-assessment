@@ -31,22 +31,33 @@ describe("POST /api/users/register", () => {
       userName: "sharif",
       password: "password",
     });
-    //console.log(newUser);
     expect(newUser.body).toHaveProperty("id");
     expect(newUser.body.user_name).toBe("sharif");
+    expect(newUser.statusCode).toBe(200);
   });
 });
 
 describe("POST /api/users/login", () => {
   test("It should respond with user", async () => {
-    //const hashedPassword = bcrypt.hashSync("password", 10);
     const user = await request(app).post("/api/users/login").send({
       userName: "hashim",
       password: "password",
     });
-    //console.log(user);
     expect(user.body).toHaveProperty("id");
     expect(user.body.user_name).toBe("hashim");
     expect(user.statusCode).toBe(200);
+  });
+});
+
+describe("POST /api/users/register", () => {
+  test("It should respond with error username already exists", async () => {
+    const newUser = await request(app).post("/api/users/register").send({
+      userName: "hashim",
+      password: "password",
+    });
+    expect(newUser.body.msg).toBe(
+      "Sorry, a user with this username already exists"
+    );
+    expect(newUser.statusCode).toBe(200);
   });
 });
