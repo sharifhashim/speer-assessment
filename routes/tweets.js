@@ -9,8 +9,8 @@ const router = express.Router();
 
 module.exports = ({ addTweet, getTweets, updateTweet, deleteTweet }) => {
   router.post("/", (req, res) => {
-    const { tweet } = req.body;
-    const userName = req.session.user.user_name;
+    const { tweet, userName } = req.body;
+    //const userName = req.session.user.user_name;
     addTweet(userName, tweet)
       .then((tweet) => res.json(tweet))
       .catch((error) => res.json({ error: error.message }));
