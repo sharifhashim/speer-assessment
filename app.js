@@ -3,8 +3,9 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const db = require("./db");
-const dbHelpers = require("./helpers/dbHelpers")(db);
+const dbHelpers = require("./db/helpers/dbHelpers")(db);
 const cookieSession = require("cookie-session");
+const bodyParser = require("body-parser");
 
 const usersRouter = require("./routes/users");
 
@@ -21,8 +22,8 @@ app.use(
     keys: ["key1", "key2"],
   })
 );
+app.use(bodyParser.json());
 
-app.use("/", indexRouter);
 app.use("/api/users", usersRouter(dbHelpers));
 
 module.exports = app;
