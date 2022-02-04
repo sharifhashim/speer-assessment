@@ -5,7 +5,7 @@ const {
   addUser,
   getUserByUserName,
   login,
-} = require("../helpers/dbHelpers.js");
+} = require("../db/helpers/dbHelpers.js");
 
 module.exports = ({ addUser, getUserByUserName, login }) => {
   router.post("/login", (req, res) => {
@@ -22,25 +22,23 @@ module.exports = ({ addUser, getUserByUserName, login }) => {
       .catch((error) => res.send(error));
   });
 
-  router.post("/resgister", (req, res) => {
+  router.post("/register", (req, res) => {
     const { userName, password } = req.body;
     const hashedPassword = bcrypt.hashSync(password, 10);
-    getUserByUserName(userName)
-      .then((user) => {
-        if (user) {
-          res.json({
-            msg: "Sorry, a user with this username already exists",
-          });
-        } else {
-          return addUser(userName, hashedPassword);
-        }
-      })
-      .then((newUser) => res.json(newUser))
-      .catch((error) =>
+    getUserByUserName(userName).then((user) => {
+      if (user) {
         res.json({
-          error: error.message,
-        })
-      );
+          msg: "Sorry, a user with this username already exists",
+        });
+      } else {
+        return addUser(userName, hashedPassword)
+          .then((newUser) => {
+            req.session.user = newUser;
+            return res.json(newUser);
+          })
+          .catch((error) => res.json({ error: error.message }));
+      }
+    });
   });
   return router;
 };
