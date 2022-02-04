@@ -44,11 +44,68 @@ module.exports = (db) => {
         }
         return null;
       })
-      .catch((err) => err);
+      .catch((error) => error);
   };
+
+  const addTweet = (userName, tweet) => {
+    const query = {
+      text: `INSERT INTO tweets (user_name, tweet)
+      VALUES ($1, $2) RETURNING *;`,
+    };
+    const values = [userName, tweet];
+
+    return db
+      .query(query, values)
+      .then((result) => result.rows[0])
+      .catch((error) => error);
+  };
+
+  const getTweet = (userName) => {
+    const query = {
+      text: `SELECT * FROM tweets WHERE user_name = $1;`,
+    };
+    const values = [userName];
+    return db
+      .query(query, values)
+      .then((result) => result.rows[0])
+      .catch((error) => error);
+  };
+
+  const updateTweet = (id, userName, tweet) => {
+    const query = {
+      text: `INSERT INTO tweets (id, user_name, tweet)
+      VALUES ($1, $2, $3)
+      ON CONFLICT (id) DO
+      UPDATE SET tweet = $3
+      RETURNING *`,
+    };
+    const values = [id, userName, tweet];
+
+    return db
+      .query(query, values)
+      .then((result) => result.rows)
+      .catch((error) => error);
+  };
+
+  const deleteTweet = (id) => {
+    const query = {
+      text: `DELETE FROM tweets WHERE id = $1;`,
+    };
+    const values = [id];
+
+    return db
+      .query(query, values)
+      .then((result) => result.rows)
+      .catch((error) => error);
+  };
+
   return {
     addUser,
     getUserByUserName,
     login,
+    addTweet,
+    getTweet,
+    updateTweet,
+    deleteTweet,
   };
 };
