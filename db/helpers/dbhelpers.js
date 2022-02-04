@@ -33,15 +33,18 @@ module.exports = (db) => {
     return db
       .query(query, values)
       .then((result) => {
+        return result.rows[0];
+      })
+      .then((result) => {
         if (
           result !== undefined &&
           bcrypt.compareSync(password, result.password)
         ) {
-          return result.rows[0];
+          return result;
         }
         return null;
       })
-      .catch((error) => erorr);
+      .catch((err) => err);
   };
   return {
     addUser,
