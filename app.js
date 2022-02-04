@@ -8,6 +8,7 @@ const cookieSession = require("cookie-session");
 const bodyParser = require("body-parser");
 
 const usersRouter = require("./routes/users");
+const tweetsRouter = require("./routes/tweets");
 
 const app = express();
 
@@ -25,5 +26,6 @@ app.use(
 app.use(bodyParser.json());
 
 app.use("/api/users", usersRouter(dbHelpers));
+app.use("/api/tweets", tweetsRouter(dbHelpers));
 
 module.exports = app;
