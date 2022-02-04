@@ -17,7 +17,8 @@ module.exports = ({ addTweet, getTweets, updateTweet, deleteTweet }) => {
   });
 
   router.get("/", (req, res) => {
-    const userName = req.session.user.user_name;
+    //const userName = req.session.user.user_name;
+    const { userName } = req.body;
     getTweets(userName)
       .then((tweets) => res.json(tweets))
       .catch((error) => res.json({ error: error.message }));
@@ -25,8 +26,8 @@ module.exports = ({ addTweet, getTweets, updateTweet, deleteTweet }) => {
 
   router.put("/:tweet_id", (req, res) => {
     const tweetId = req.params.tweet_id;
-    const userName = req.session.user.user_name;
-    const { tweet } = req.body;
+    //const userName = req.session.user.user_name;
+    const { tweet, userName } = req.body;
     updateTweet(tweetId, userName, tweet)
       .then((tweet) => res.json(tweet))
       .catch((error) => res.json({ error: error.message }));
@@ -35,7 +36,7 @@ module.exports = ({ addTweet, getTweets, updateTweet, deleteTweet }) => {
   router.delete("/:tweet_id", (req, res) => {
     const tweetId = req.params.tweet_id;
     deleteTweet(tweetId)
-      .then(() => res.json({}))
+      .then(() => res.json({ message: "Your post successfully deleted" }))
       .catch((error) => res.json({ error: error.message }));
   });
 

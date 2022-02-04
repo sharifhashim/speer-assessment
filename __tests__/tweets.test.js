@@ -12,10 +12,10 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await db.query(
-    `INSERT INTO users (user_name, password) VALUES ('hashim', '${hashedPassword}')`
+    `INSERT INTO tweets (user_name, tweet) VALUES ('hashim', 'hello world!')`
   );
   await db.query(
-    `INSERT INTO tweets (user_name, tweet) VALUES ('hashim', 'hello world!')`
+    `INSERT INTO users (user_name, password) VALUES ('hashim', '${hashedPassword}')`
   );
   const response = await request(app).post("/api/users/login").send({
     userName: "hashim",
@@ -39,9 +39,29 @@ describe("POST /api/tweets", () => {
       userName: userName,
       tweet: "testing testing",
     });
-    console.log(newTweet);
     expect(newTweet.body).toHaveProperty("id");
     expect(newTweet.body.tweet).toBe("testing testing");
-    expect(newUser.statusCode).toBe(200);
+    expect(newTweet.statusCode).toBe(200);
+  });
+});
+
+describe("PUT /api/tweets/2", () => {
+  test("It should edit tweet", async () => {
+    const editedTweet = await request(app).put("/api/tweets/2").send({
+      userName: userName,
+      tweet: "updated tweet",
+    });
+    expect(editedTweet.body[0]).toHaveProperty("id");
+    expect(editedTweet.body[0].tweet).toBe("updated tweet");
+    expect(editedTweet.statusCode).toBe(200);
+  });
+});
+
+describe("DELETE /api/tweets/2", () => {
+  test("It should delete tweet", async () => {
+    const deletedTweet = await request(app).delete("/api/tweets/2");
+
+    expect(deletedTweet.body.message).toBe("Your post successfully deleted");
+    expect(deletedTweet.statusCode).toBe(200);
   });
 });
