@@ -1,6 +1,8 @@
 const db = require("../db");
 const request = require("supertest");
 const app = require("../app");
+const bcrypt = require("bcryptjs");
+const hashedPassword = bcrypt.hashSync("password", 10);
 
 beforeAll(async () => {
   await db.query(
@@ -10,7 +12,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await db.query(
-    "INSERT INTO users (user_name, password) VALUES ('hashim', 'password')"
+    `INSERT INTO users (user_name, password) VALUES ('hashim', '${hashedPassword}')`
   );
 });
 
@@ -32,5 +34,19 @@ describe("POST /api/users/register", () => {
     //console.log(newUser);
     expect(newUser.body).toHaveProperty("id");
     expect(newUser.body.user_name).toBe("sharif");
+  });
+});
+
+describe("POST /api/users/login", () => {
+  test("It should respond with user", async () => {
+    //const hashedPassword = bcrypt.hashSync("password", 10);
+    const user = await request(app).post("/api/users/login").send({
+      userName: "hashim",
+      password: "password",
+    });
+    //console.log(user);
+    expect(user.body).toHaveProperty("id");
+    expect(user.body.user_name).toBe("hashim");
+    expect(user.statusCode).toBe(200);
   });
 });
