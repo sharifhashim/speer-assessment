@@ -60,13 +60,13 @@ module.exports = (db) => {
       .catch((error) => error);
   };
 
-  const getTweets = (userName) => {
+  const getTweets = () => {
     const query = {
-      text: `SELECT * FROM tweets WHERE user_name = $1;`,
+      text: `SELECT * FROM tweets;`,
     };
-    const values = [userName];
+
     return db
-      .query(query, values)
+      .query(query)
       .then((result) => result.rows[0])
       .catch((error) => error);
   };

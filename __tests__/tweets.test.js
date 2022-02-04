@@ -65,3 +65,13 @@ describe("DELETE /api/tweets/2", () => {
     expect(deletedTweet.statusCode).toBe(200);
   });
 });
+
+describe("GET /api/tweets", () => {
+  test("It should get a list of tweets", async () => {
+    const tweets = await request(app).get("/api/tweets");
+
+    expect(tweets.body).toHaveProperty("id");
+    expect(tweets.body.tweet).toBe("hello world!");
+    expect(tweets.statusCode).toBe(200);
+  });
+});
